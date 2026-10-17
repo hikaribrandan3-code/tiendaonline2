@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 112" role="img" aria-labelledby="title">
+  <title id="title">Perfumería</title>
+  <rect width="320" height="112" fill="none"/>
+  <text x="4" y="63" fill="#171719" font-family="Georgia, 'Times New Roman', serif" font-size="54" letter-spacing="-2">Perfumería</text>
+  <path d="M6 78h273" stroke="#b6a58c" stroke-width="1.5"/>
+  <text x="7" y="99" fill="#6d6a68" font-family="Arial, sans-serif" font-size="12" letter-spacing="4.2">FRAGANCIAS · CUIDADO</text>
+</svg>

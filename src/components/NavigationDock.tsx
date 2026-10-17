@@ -13,13 +13,16 @@ export function NavigationDock({
   label,
   context,
   items,
+  visible = true,
 }: {
   label: string;
   context: "customer" | "admin";
   items: DockItem[];
+  visible?: boolean;
 }) {
+  const hidden = context === "customer" && !visible;
   return (
-    <nav aria-label={label} className={`bottom-dock ${context}-dock`}>
+    <nav aria-label={label} aria-hidden={hidden || undefined} className={`bottom-dock ${context}-dock ${context === "customer" ? "perfume-customer-dock" : ""} ${hidden ? "" : "is-visible"}`}>
       {items.map(({ id, label: title, icon: Icon, active, to, onClick, count }) => {
         const content = (
           <>
@@ -37,7 +40,7 @@ export function NavigationDock({
             to={to}
             className={className}
             aria-current={active ? "page" : undefined}
-            aria-label={count ? `${title}, ${count} prendas` : title}
+            aria-label={count ? `${title}, ${count} productos` : title}
           >
             {content}
           </Link>

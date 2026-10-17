@@ -10,55 +10,8 @@ import {
 } from "@/components/StoreManagement";
 import { CATEGORIES, PRODUCTS, STORE, formatARS, type Product } from "@/lib/products";
 
-const photos = [
-  ["img_1445.webp", "Percheros con prendas"],
-  ["img_1446.webp", "Remera gráfica azul"],
-  ["img_1447.webp", "Gorras y accesorios"],
-  ["img_1448.webp", "Selección de prendas"],
-  ["img_1453.webp", "Detalles de la colección"],
-  ["img_1455.webp", "Prendas en exhibición"],
-  ["img_1456.webp", "Remera gráfica de espalda"],
-  ["img_1469.webp", "Accesorios"],
-  ["img_1472.webp", "Interior del local"],
-  ["img_1474.webp", "Rincón de exhibición"],
-  ["img_1488.webp", "Remera de la colección"],
-  ["img_1489.webp", "Prendas en perchas"],
-  ["img_1492.webp", "Detalle de una prenda"],
-  ["img_1496.webp", "Selección del local"],
-  ["img_1498.webp", "Tops de la colección"],
-  ["img_1499.webp", "Remera con ribetes"],
-  ["new-1456-web-back.webp", "Remera gráfica con estampa trasera"],
-  ["new-1483-dark-denim.webp", "Jean baggy oscuro"],
-  ["new-1489-rack-white-tee.webp", "Remera clara en exhibición"],
-  ["new-1458-cross-tee.webp", "Remera negra con estampa urbana"],
-  ["new-1459-cross-detail.webp", "Detalle de estampa urbana"],
-  ["new-1457-grey-denim.webp", "Jean baggy gris"],
-  ["ig-womens-butterfly-look.webp", "Look mujer con remera estampada"],
-  ["ig-womens-white-butterfly.webp", "Remera blanca con mariposa"],
-  ["ig-raglan-heart-tees.webp", "Remeras raglán estampadas"],
-  ["ig-raglan-classic-tees.webp", "Remeras raglán clásicas"],
-  ["ig-mens-black-look.webp", "Look urbano con remera negra"],
-  ["ig-mens-white-tee-look.webp", "Look con remera blanca y bermuda"],
-  ["ig-mens-grey-short-look.webp", "Look con remera gris y shorts"],
-  ["ig-mens-grey-shorts-back.webp", "Bermuda baggy vista trasera"],
-  ["ig-angel-print-tees.webp", "Remeras con estampa de alas"],
-  ["ig-web-spider-tees.webp", "Remeras gráficas estampadas"],
-  ["ig-graphic-shorts-set.webp", "Shorts baggy gráficos"],
-  ["ig-tribal-shorts-set.webp", "Shorts con estampa tribal"],
-  ["ig-dark-denim-shorts.webp", "Bermuda de jean oscura"],
-  ["ig-white-graphic-hoodie.webp", "Buzo blanco estampado"],
-] as const;
-
-const stockById: Record<string, number> = {
-  "demo-remera-azul": 8,
-  "demo-remera-negra": 5,
-  "demo-gorra-jordan": 12,
-  "demo-gorra-game": 7,
-  "demo-prendas-mujer": 6,
-  "demo-polo": 4,
-  "demo-medias": 15,
-  "demo-remera-blanca": 9,
-};
+const photos = PRODUCTS.map((product) => [product.image, product.title] as const);
+const stockById: Record<string, number> = {};
 
 type Section = AdminSection;
 
@@ -113,7 +66,7 @@ export default function AdminDemo() {
     setDraftCategory(product.category);
     setDraftPrice(String(product.price));
     setDraftStock(String(stocks[product.id] ?? 0));
-    setDraftPhoto(product.image.replace("/images/gallery/", ""));
+    setDraftPhoto(product.image);
     setAddStarted(true);
     setSection("agregar");
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -131,11 +84,13 @@ export default function AdminDemo() {
     const created: Product = {
       id,
       title: draftName.trim(),
-      brand: "R&E Urban Style",
+      brand: STORE.name,
       category: draftCategory,
       categoryName,
       price: Number(draftPrice),
-      image: draftPhoto.startsWith("blob:") ? draftPhoto : `/images/gallery/${draftPhoto}`,
+      image: draftPhoto.startsWith("blob:") || draftPhoto.startsWith("/")
+        ? draftPhoto
+        : `/images/perfumeria/${draftPhoto}`,
       specs: ["Artículo agregado en la demo"],
       description: "Artículo de muestra agregado durante la demostración.",
       demo: true,
@@ -194,7 +149,7 @@ export default function AdminDemo() {
                 <p className="mt-1 text-xs text-black/50">
                   {section === "resumen" && "Resumen del inventario y la actividad."}
                   {section === "productos" && "Artículos, categorías, precios y stock."}
-                  {section === "agregar" && "Cargá una prenda y elegí sus fotos."}
+                  {section === "agregar" && "Cargá un producto y elegí sus fotos."}
                 </p>
               </div>
               <span className="rounded-full border border-amber-900/10 bg-amber-100/70 px-3 py-1.5 text-[10px] font-medium text-amber-950/75">
@@ -296,7 +251,7 @@ export default function AdminDemo() {
                       required
                       value={draftName}
                       onChange={(event) => setDraftName(event.target.value)}
-                      placeholder="Ej. Remera oversize gráfica"
+                      placeholder="Ej. Perfume floral 50 ml"
                       className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-3 text-sm font-normal outline-none focus:border-black/40"
                     />
                   </label>
@@ -363,9 +318,7 @@ export default function AdminDemo() {
                 </div>
                 {draftPhoto && (
                   <img
-                    src={
-                      draftPhoto.startsWith("blob:") ? draftPhoto : `/images/gallery/${draftPhoto}`
-                    }
+                    src={draftPhoto.startsWith("blob:") || draftPhoto.startsWith("/") ? draftPhoto : `/images/perfumeria/${draftPhoto}`}
                     alt="Vista previa del artículo"
                     className="mb-3 aspect-[4/3] w-full rounded-2xl bg-[#f7f6f3] object-cover"
                   />
@@ -384,7 +337,7 @@ export default function AdminDemo() {
                       className={`relative aspect-square overflow-hidden rounded-xl border-2 ${draftPhoto === src ? "border-black" : "border-transparent"}`}
                     >
                       <img
-                        src={`/images/gallery/${src}`}
+                        src={src.startsWith("/") ? src : `/images/perfumeria/${src}`}
                         alt={title}
                         loading="lazy"
                         className="h-full w-full object-cover"
@@ -428,33 +381,28 @@ export default function AdminDemo() {
                 }
               </h1>
               <div className="mt-5 space-y-4 text-sm">
-                {setting === "whatsapp" && <p>WhatsApp: +54 351 122 76008</p>}
+                {setting === "whatsapp" && <p>WhatsApp: {STORE.whatsapp || "Canal de muestra · sin número conectado"}</p>}
                 {setting === "business" && (
                   <>
-                    <p>R&E Urban Style</p>
-                    <p>Alta Lagurirre 2415 · Córdoba Capital</p>
-                    <p>Lunes a sábado · 9:00 a 18:00</p>
+                    <p>{STORE.name}</p>
+                    <p>{STORE.tagline}</p>
+                    <p>Datos de contacto a definir con el comercio.</p>
                   </>
                 )}
                 {setting === "appearance" && (
                   <>
                     <img
-                      src="/re-logo.svg"
+                      src="/perfumeria-logo.svg"
                       alt="Logo de la tienda"
                       className="h-16 w-32 object-contain"
                     />
-                    <p>Fondo crema · tipografía negra · acentos neutros</p>
+                    <p>Fondos blanco y gris suave · tipografía negra · detalles neutros</p>
                   </>
                 )}
                 {setting === "instagram" && (
-                  <a
-                    href={STORE.instagram}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex min-h-11 items-center underline"
-                  >
-                    @reachel_moda ↗
-                  </a>
+                  STORE.instagram ? (
+                    <a href={STORE.instagram} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center underline">Instagram ↗</a>
+                  ) : <p>Cuenta de muestra · Instagram pendiente de configurar.</p>
                 )}
                 {setting === "account" && (
                   <p>Cuenta del propietario y preferencias de la tienda.</p>

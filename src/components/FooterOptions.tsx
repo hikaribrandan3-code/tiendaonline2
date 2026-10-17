@@ -1,83 +1,88 @@
 import { Link } from "react-router-dom";
-import { LockKeyhole, Instagram, ArrowUpRight } from "lucide-react";
+import { ArrowRight, Headphones, Instagram } from "lucide-react";
+import type { ReactNode } from "react";
 import { adminEntry } from "@/lib/storeConfig";
 import { STORE } from "@/lib/products";
+import { WhatsAppGlyph } from "@/components/WhatsAppGlyph";
+
+function SocialIcon({
+  href,
+  label,
+  children,
+}: {
+  href?: string;
+  label: string;
+  children: ReactNode;
+}) {
+  const className = "perfume-footer-social";
+  if (!href) {
+    return <span className={`${className} is-unconfigured`} aria-label={`${label} (sin configurar)`} title={`${label}: sin configurar`}>{children}</span>;
+  }
+  return <a className={className} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>{children}</a>;
+}
+
+function TikTokGlyph() {
+  return <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M19.7 7.1a6.1 6.1 0 0 1-3.8-1.4v8.1a5.3 5.3 0 1 1-4.6-5.2v3.2a2.2 2.2 0 1 0 1.4 2.1V2h3.2a5.8 5.8 0 0 0 3.7 3v2.1Z" /></svg>;
+}
+
+const whatsappHref = STORE.whatsapp
+  ? `https://wa.me/${STORE.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(`Hola ${STORE.name}, tengo una consulta.`)}`
+  : undefined;
+
 export const FooterOption1 = () => (
-  <footer className="mx-auto mt-7 w-full max-w-7xl px-5 pb-3 pt-3 lg:px-8">
-    <div className="grid grid-cols-2 gap-x-5 gap-y-3 border-t border-black/20 pt-4 sm:grid-cols-[1.1fr_1fr_1fr_1.2fr] sm:gap-y-2">
-      <Link to="/" aria-label="R&E Urban Style · Inicio" className="self-center">
-        <img
-          src="/re-logo.svg"
-          alt="R&E Urban Style"
-          width="120"
-          height="60"
-          className="h-12 w-24 object-contain object-left"
-        />
-      </Link>
-      <nav aria-label="Enlaces del pie" className="grid content-start text-xs">
-        <Link className="flex min-h-11 items-center" to="/">
-          Inicio
+  <footer className="perfume-footer" aria-label="Información de la tienda">
+    <div className="perfume-footer-main">
+      <div className="perfume-footer-brand">
+        <Link to="/" aria-label={`${STORE.name} · Inicio`}>
+          <img src="/perfumeria-logo.svg" alt={STORE.name} width="190" height="66" />
         </Link>
-        <Link className="flex min-h-11 items-center" to="/catalogo">
-          Catálogo
-        </Link>
-        <Link className="flex min-h-11 items-center" to="/contacto">
-          Contacto
-        </Link>
-      </nav>
-      <nav aria-label="Categorías del pie" className="grid content-start text-xs">
-        <Link className="flex min-h-11 items-center" to="/catalogo?cat=hombre">
-          Hombre
-        </Link>
-        <Link className="flex min-h-11 items-center" to="/catalogo?cat=mujer">
-          Mujer
-        </Link>
-        <Link className="flex min-h-11 items-center" to="/catalogo?cat=accesorios">
-          Accesorios
-        </Link>
-      </nav>
-      <div className="border-l border-black/20 pl-5 text-xs">
-        <div className="flex items-center gap-2">
-          <a
-            href={STORE.instagram}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Instagram de R&E"
-            className="grid h-11 w-11 place-items-center"
-          >
-            <Instagram size={25} />
-          </a>
-          {STORE.tiktok && (
-            <a
-              href={STORE.tiktok}
-              target="_blank"
-              rel="noreferrer"
-              className="flex min-h-11 items-center gap-1"
-            >
-              TikTok <ArrowUpRight size={15} />
-            </a>
-          )}
+        <p>Fragancias que te acompañan<br />en cada momento.</p>
+        <div className="perfume-footer-socials" aria-label="Redes sociales">
+          <SocialIcon href={STORE.instagram || undefined} label="Instagram de Perfumería"><Instagram size={19} strokeWidth={1.8} /></SocialIcon>
+          <SocialIcon href={STORE.tiktok || undefined} label="TikTok de Perfumería"><TikTokGlyph /></SocialIcon>
+          <SocialIcon href={whatsappHref} label="WhatsApp de Perfumería"><WhatsAppGlyph /></SocialIcon>
         </div>
-        <p className="mt-2 font-medium">Seguinos</p>
-        <p className="mt-1 leading-relaxed text-muted-foreground">
-          Ropa urbana.
-          <br />
-          Tu forma de llevarla.
-        </p>
+      </div>
+      <div className="perfume-footer-help">
+        <Headphones size={21} strokeWidth={1.6} aria-hidden="true" />
+        <div>
+          <strong>¿Necesitás ayuda?</strong>
+          <p>Escribinos por WhatsApp.<br />Te asesoramos personalmente.</p>
+        </div>
+        {whatsappHref ? (
+          <a className="perfume-footer-whatsapp" href={whatsappHref} target="_blank" rel="noopener noreferrer">
+            <WhatsAppGlyph /> Hablar por WhatsApp <ArrowRight size={16} />
+          </a>
+        ) : (
+          <span className="perfume-footer-whatsapp is-disabled" aria-disabled="true">WhatsApp pendiente de configurar</span>
+        )}
       </div>
     </div>
-    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[10px] text-muted-foreground">
-      <p>© {new Date().getFullYear()} R&E Urban Style. Todos los derechos reservados.</p>
-      <div className="ml-auto flex items-center gap-1">
-        <span>Córdoba, Argentina.</span>
-        <Link
-          to={adminEntry}
-          aria-label="Acceso del propietario"
-          className="grid h-11 w-11 place-items-center rounded-full text-black/45 hover:bg-black/5 hover:text-black"
-        >
-          <LockKeyhole size={14} strokeWidth={1.5} />
-        </Link>
-      </div>
+    <nav className="perfume-footer-legal" aria-label="Información y políticas">
+      <details>
+        <summary>Política de privacidad</summary>
+        <p>Pendiente de definir con el comercio antes de publicar la tienda.</p>
+      </details>
+      <details>
+        <summary>Términos y condiciones</summary>
+        <p>Los productos y precios visibles son de muestra; disponibilidad y condiciones deben confirmarse con la tienda.</p>
+      </details>
+      <Link to="/contacto">Envíos y atención</Link>
+    </nav>
+    <div className="perfume-footer-meta">
+      <p>
+        <Link to={adminEntry} aria-label="Abrir el panel de Perfumería">© 2026 {STORE.name}</Link>
+        <span> · Córdoba · Precios de muestra</span>
+      </p>
+      <a
+        className="perfume-footer-credit"
+        href="https://hikari-brandan.vercel.app/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Hecho por Hikari Studio (abre en una pestaña nueva)"
+      >
+        Made by <span>Hikari Studio</span>
+      </a>
     </div>
   </footer>
 );

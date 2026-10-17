@@ -3,7 +3,7 @@ import { STORE } from "@/lib/products";
 export function useStoreBranding(ownerIdOverride?: string) {
   const [branding, setBranding] = useState({
     name: import.meta.env.VITE_STORE_NAME || STORE.name,
-    logo: import.meta.env.VITE_STORE_LOGO_URL || "/re-logo.svg",
+    logo: import.meta.env.VITE_STORE_LOGO_URL || "/perfumeria-logo.svg",
   });
   useEffect(() => {
     const ownerId =

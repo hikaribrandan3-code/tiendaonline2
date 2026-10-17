@@ -15,11 +15,11 @@ export function ProductCard({ product }: { product: Product; index?: number; ima
     return () => window.clearTimeout(timer);
   }, [added]);
   return (
-    <article className="min-w-0">
-      <div className="relative">
+    <article className="perfume-product-card min-w-0">
+      <div className="perfume-product-art relative">
         <Link
           to={`/producto/${product.id}`}
-          className="group block aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-white"
+          className="group block aspect-square overflow-hidden rounded-[1.2rem] bg-[#f1f0f4]"
         >
           <img
             src={product.image}
@@ -28,12 +28,12 @@ export function ProductCard({ product }: { product: Product; index?: number; ima
             decoding="async"
             width="960"
             height="1200"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.03]"
           />
         </Link>
         <button
           type="button"
-          aria-label={`${product.has_sizes ? "Elegir talle de" : "Agregar al carrito:"} ${product.title}`}
+          aria-label={`${product.has_sizes ? "Choose an option for" : "Add to cart:"} ${product.title}`}
           onClick={() => {
             if (product.has_sizes) {
               navigate(`/producto/${product.id}`);
@@ -41,20 +41,20 @@ export function ProductCard({ product }: { product: Product; index?: number; ima
             }
             add(product);
             setAdded(true);
-            toast.success("Agregado al carrito", { description: product.title });
+            toast.success("Added to cart", { description: product.title });
           }}
-          className="absolute bottom-3 right-3 grid h-11 w-11 place-items-center rounded-full bg-black text-white shadow-lg transition hover:scale-105 active:scale-95"
+          className="perfume-add-button absolute bottom-2 right-2 grid h-8 w-8 place-items-center rounded-full text-white shadow-sm transition hover:scale-105 active:scale-95"
         >
-          {added ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}
+          {added ? <Check className="h-3.5 w-3.5" /> : <ShoppingBag className="h-3.5 w-3.5" />}
         </button>
       </div>
-      <div className="px-1 pb-4 pt-3">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+      <div className="px-1 pb-3 pt-2.5">
+        <p className="text-[10px] tracking-wide text-muted-foreground">
           {product.categoryName ?? product.brand}
         </p>
         <Link
           to={`/producto/${product.id}`}
-          className="mt-1 block min-h-[2.5em] break-words text-sm font-medium leading-snug"
+          className="mt-1 block min-h-[2.5em] break-words text-[13px] font-medium leading-snug"
         >
           {product.title}
         </Link>

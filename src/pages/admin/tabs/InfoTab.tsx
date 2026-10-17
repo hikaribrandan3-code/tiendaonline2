@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Download, Image, Printer, Save, Upload, Video, X } from "lucide-react";
+import { STORE } from "@/lib/products";
 
 type Profile = {
   id: string;
@@ -159,7 +160,7 @@ export default function InfoTab({
     return lineArray.join("\n");
   };
 
-  const cardName = profile.contact_info?.split("\n")[0] || "R&E Urban Style";
+  const cardName = profile.contact_info?.split("\n")[0] || STORE.name;
 
   return (
     <div className="space-y-6">
@@ -187,7 +188,7 @@ export default function InfoTab({
                   e.target.value + (p.contact_info?.slice(p.contact_info.indexOf("\n")) || ""),
               }))
             }
-            placeholder="R&E Urban Style"
+            placeholder="Perfumería"
             className="rounded-full"
           />
         </div>
@@ -197,7 +198,7 @@ export default function InfoTab({
             rows={3}
             value={profile.description ?? ""}
             onChange={(e) => set("description", e.target.value)}
-            placeholder="Regalos curados, libros, flores, mate y accesorios argentinos. Todo lo que necesitás para los momentos especiales."
+            placeholder="Perfumes, cremas, lociones y esenciales de belleza para todos los días."
             className="rounded-2xl text-xs"
           />
           <p className="text-[10px] text-muted-foreground">
@@ -374,7 +375,7 @@ export default function InfoTab({
             rows={2}
             value={profile.description ?? ""}
             onChange={(e) => set("description", e.target.value)}
-            placeholder="Regalos curados, libros, flores, mate y accesorios argentinos..."
+            placeholder="Perfumes, cuidado personal y belleza..."
             className="rounded-lg mt-2 text-xs"
           />
           <p className="text-[10px] text-muted-foreground mt-1">

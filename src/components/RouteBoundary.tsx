@@ -9,8 +9,8 @@ export class RouteBoundary extends Component<{ children: ReactNode }, { failed: 
     return (
       <div role="alert" className="mx-auto max-w-md px-6 py-20 text-center">
         <img
-          src="/re-logo.svg"
-          alt="R&E Urban Style"
+          src="/perfumeria-logo.svg"
+          alt="Perfumería"
           width="120"
           height="60"
           className="mx-auto mb-8"

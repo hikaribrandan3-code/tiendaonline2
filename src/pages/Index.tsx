@@ -1,179 +1,163 @@
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Shirt } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
-import { ModelLookbook } from "@/components/ModelLookbook";
-import { StoreGallery } from "@/components/StoreGallery";
-import { useStoreProducts } from "@/lib/useStoreProducts";
+import { CATEGORIES, PRODUCTS, formatARS } from "@/lib/products";
+
+const featuredProducts = PRODUCTS.filter((product) => product.category === "perfumes");
+const sampleReviews = [
+  { name: "Sofía Martínez", quote: "Aromas hermosos y una atención súper cálida.", age: "hace 2 semanas", color: "#c98272" },
+  { name: "Lucía Ramírez", quote: "Encontré mi perfume favorito. Volvería a comprar.", age: "hace un mes", color: "#718a78" },
+  { name: "Camila Gómez", quote: "Muy buena experiencia y productos preciosos.", age: "hace 3 semanas", color: "#7c83a5" },
+  { name: "Valentina Pérez", quote: "Me ayudaron a elegir justo el aroma que buscaba.", age: "hace 5 días", color: "#bd9862" },
+];
 
 export default function Index() {
-  const { products, categories, isDemo } = useStoreProducts();
-  const [category, setCategory] = useState("");
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const featured = featuredProducts[featuredIndex];
+
+  const showPrevious = () => setFeaturedIndex((index) => (index - 1 + featuredProducts.length) % featuredProducts.length);
+  const showNext = () => setFeaturedIndex((index) => (index + 1) % featuredProducts.length);
+
   useEffect(() => {
-    if (
-      !window.IntersectionObserver ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    )
-      return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.setAttribute("data-visible", "true");
-            observer.unobserve(entry.target);
-          }
-        }
-      },
-      { threshold: 0.05, rootMargin: "0px 0px 60px" },
-    );
-    document.querySelectorAll(".reveal-section").forEach((section) => {
-      if (section.getBoundingClientRect().top > window.innerHeight)
-        section.setAttribute("data-reveal", "true");
-      observer.observe(section);
-    });
-    return () => observer.disconnect();
+    const timer = window.setInterval(showNext, 6000);
+    return () => window.clearInterval(timer);
   }, []);
-  const selected = products.filter((product) => !category || product.category === category);
+
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-4 lg:px-8">
-      <section className="editorial-hero -mx-4 lg:-mx-8" aria-labelledby="home-title">
-        <div className="hero-copy">
-          <p className="hero-eyebrow">R&E · URBAN ESSENTIALS</p>
-          <h1 id="home-title">
-            TU ESTILO.
-            <br />
-            TODOS
-            <br />
-            LOS DÍAS.
-          </h1>
-          <div className="my-3 h-px w-7 bg-black/50" />
-          <p className="hero-categories">REMERAS · BERMUDAS · ACCESORIOS</p>
-          <p className="hero-categories mt-1">HOMBRE · MUJER</p>
-          <Link to="/catalogo" className="hero-cta">
-            VER COLECCIÓN <ArrowRight size={17} />
-          </Link>
-        </div>
-        <div className="hero-image">
-          <img
-            src="/images/hero-editorial-v2.webp"
-            alt="Selección de remeras, bermuda y gorra de estilo urbano"
-            width="1536"
-            height="1024"
-            fetchPriority="high"
-          />
-        </div>
-      </section>
-      <nav
-        aria-label="Destacados de la colección"
-        className="category-strip -mx-4 grid grid-cols-3 divide-x divide-black/20 bg-white/50 py-3 lg:-mx-8"
-      >
-        <Link to="/catalogo?q=remera">
-          <Shirt size={22} strokeWidth={1.6} />
-          <strong>REMERAS</strong>
-          <small>BÁSICAS Y ESTAMPADAS</small>
-        </Link>
-        <Link to="/catalogo?cat=shorts">
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 32 32"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            aria-hidden="true"
-          >
-            <path d="M7 4h18l3 24-10-1-2-10-2 10-10 1Z" />
-            <path d="M7 8h18" />
-          </svg>
-          <strong>BERMUDAS</strong>
-          <small>COMODIDAD URBANA</small>
-        </Link>
-        <Link to="/catalogo?cat=accesorios">
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 32 32"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            aria-hidden="true"
-          >
-            <path d="M5 21C4 9 10 4 18 5s11 9 9 17l-10-2-9 7-5-2Z" />
-            <path d="M17 5c5 6 5 11 3 15M8 27l9-7" />
-          </svg>
-          <strong>ACCESORIOS</strong>
-          <small>COMPLETÁ TU LOOK</small>
-        </Link>
-      </nav>
-      <p className="py-3 text-center text-[10px] tracking-wide text-muted-foreground">
-        Ventas minoristas y mayoristas · Córdoba Capital
-      </p>
-      <ModelLookbook />
-      <div
-        className="store-gallery-track mt-6 flex gap-2 overflow-x-auto pb-2"
-        role="group"
-        aria-label="Categorías"
-      >
-        {[{ id: "", label: "Todo" }, ...categories].map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            aria-pressed={category === cat.id}
-            onClick={() => setCategory(cat.id)}
-            className={`min-h-11 shrink-0 rounded-full px-5 py-2.5 text-xs font-medium transition ${category === cat.id ? "bg-black text-white" : "border border-white bg-white/80 text-foreground hover:bg-white"}`}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>
-      <section className="reveal-section mt-6">
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-medium">
-            {category ? categories.find((cat) => cat.id === category)?.label : "Nuevos favoritos"}
-          </h2>
-          <Link to="/catalogo" className="text-xs underline underline-offset-4">
-            Ver colección
-          </Link>
-        </div>
-        {isDemo && (
-          <p className="mb-4 text-[11px] text-muted-foreground">
-            Selección de muestra · fotos reales del local · precios ilustrativos
-          </p>
-        )}
-        {selected.length ? (
-          category ? (
-            <div className="grid grid-cols-2 gap-x-3 gap-y-3 sm:gap-x-5 lg:grid-cols-4">
-              {selected.slice(0, 8).map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          ) : (
-            <div
-              className="store-product-carousel -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 sm:-mx-8 sm:gap-5 sm:px-8 lg:-mx-8 lg:px-8"
-              role="region"
-              aria-label="Deslizá para explorar la colección"
-              tabIndex={0}
-            >
-              {selected.map((product) => (
-                <div
-                  key={product.id}
-                  className="w-[72vw] max-w-[280px] shrink-0 snap-start sm:w-[240px]"
-                >
-                  <ProductCard product={product} />
-                </div>
-              ))}
-            </div>
-          )
-        ) : (
-          <div className="rounded-3xl border border-white bg-white/60 px-6 py-12 text-center text-sm text-muted-foreground">
-            Estamos armando esta selección.{" "}
-            <button onClick={() => setCategory("")} className="ml-1 text-foreground underline">
-              Explorar todo
-            </button>
+    <div className="perfume-home mx-auto w-full max-w-6xl px-4 pb-5 sm:px-6 lg:px-8">
+      <section className="home-feature" aria-labelledby="featured-title">
+        <div className="home-section-heading">
+          <div>
+            <p className="home-overline">DESCUBRÍ</p>
+            <h1 id="featured-title">Perfumes</h1>
           </div>
-        )}
+          <Link to="/catalogo?cat=perfumes" className="home-see-all">
+            Ver todos <ArrowRight size={15} />
+          </Link>
+        </div>
+        <article
+          className="home-feature-card"
+          onTouchStart={(event) => setTouchStart(event.changedTouches[0]?.clientX ?? null)}
+          onTouchEnd={(event) => {
+            if (touchStart === null) return;
+            const delta = event.changedTouches[0]?.clientX - touchStart;
+            if (delta > 45) showPrevious();
+            else if (delta < -45) showNext();
+            setTouchStart(null);
+          }}
+        >
+          <div className="home-feature-image">
+            <Link to={`/producto/${featured.id}`} aria-label={`Ver ${featured.title}`}>
+              <img key={featured.id} src={featured.image} alt={featured.title} fetchPriority={featuredIndex === 0 ? "high" : "auto"} />
+            </Link>
+            <button type="button" className="home-feature-arrow is-left" onClick={showPrevious} aria-label="Perfume anterior">
+              <ChevronLeft size={19} />
+            </button>
+            <button type="button" className="home-feature-arrow is-right" onClick={showNext} aria-label="Perfume siguiente">
+              <ChevronRight size={19} />
+            </button>
+            <div className="home-feature-dots" aria-label={`Perfume ${featuredIndex + 1} de ${featuredProducts.length}`}>
+              {featuredProducts.map((product, index) => (
+                <button key={product.id} type="button" aria-label={`Mostrar ${product.title}`} aria-current={index === featuredIndex ? "true" : undefined} onClick={() => setFeaturedIndex(index)} />
+              ))}
+            </div>
+          </div>
+          <div className="home-feature-copy" key={`copy-${featured.id}`}>
+            <p>SELECCIÓN DE LA CASA · {featuredIndex + 1}/{featuredProducts.length}</p>
+            <Link to={`/producto/${featured.id}`}>
+              <h2>{featured.title}</h2>
+            </Link>
+            <span className="home-feature-description">{featured.description}</span>
+            <div className="home-feature-buy">
+              <strong>{formatARS(featured.price)}</strong>
+              <Link to={`/producto/${featured.id}`}>
+                Descubrir perfume <ArrowRight size={16} />
+              </Link>
+            </div>
+          </div>
+        </article>
       </section>
-      <StoreGallery />
+
+      <section className="home-reviews" aria-label="Lo que dicen quienes nos eligen, contenido de muestra">
+        <div className="home-review-heading">
+          <div>
+            <p className="home-overline">LA EXPERIENCIA</p>
+            <h2>Palabras que dejan huella</h2>
+          </div>
+          <span className="home-review-demo-label">Opiniones de muestra</span>
+        </div>
+        <div className="home-review-window">
+          <div className="home-review-track">
+            {[false, true].map((duplicate) => (
+              <div
+                key={duplicate ? "duplicate" : "reviews"}
+                className="home-review-group"
+                aria-hidden={duplicate || undefined}
+              >
+                {sampleReviews.map((review) => (
+                  <article key={review.name} className="home-review-card">
+                    <header>
+                      <span className="home-review-avatar" style={{ background: review.color }} aria-hidden="true">
+                        {review.name.split(" ").map((part) => part[0]).join("")}
+                      </span>
+                      <span className="home-review-person">
+                        <strong>{review.name}</strong>
+                        <small>Cliente verificada · {review.age}</small>
+                      </span>
+                      <span className="home-review-mark" aria-hidden="true">R</span>
+                    </header>
+                    <div className="home-review-card-stars" aria-label="5 de 5 estrellas">★★★★★ <span>5.0</span></div>
+                    <p>{review.quote}</p>
+                    <footer>Fragancias elegidas con cariño</footer>
+                  </article>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="home-categories" aria-labelledby="categories-title">
+        <div className="home-section-heading">
+          <div>
+            <h2 id="categories-title">Categorías</h2>
+          </div>
+        </div>
+        <div className="home-category-list">
+          {CATEGORIES.map((category) => (
+            <Link
+              key={category.id}
+              to={`/catalogo?cat=${category.id}`}
+              className="home-category"
+            >
+              <span>{category.label}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="home-browse" aria-labelledby="browse-title">
+        <div className="home-section-heading">
+          <div>
+            <p className="home-overline">UNA SELECCIÓN PARA VOS</p>
+            <h2 id="browse-title">Más perfumes</h2>
+          </div>
+          <Link to="/catalogo" className="home-see-all">
+            Ver más <ArrowRight size={15} />
+          </Link>
+        </div>
+        <div className="home-product-carousel store-gallery-track" role="region" aria-label="Deslizá para descubrir más perfumes" tabIndex={0}>
+          {PRODUCTS.filter((product) => product.category === "perfumes")
+            .slice(1)
+            .map((product) => (
+              <div key={product.id} className="home-carousel-card">
+                <ProductCard product={product} />
+              </div>
+            ))}
+        </div>
+      </section>
     </div>
   );
 }

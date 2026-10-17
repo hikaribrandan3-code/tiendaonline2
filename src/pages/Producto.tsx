@@ -18,7 +18,7 @@ export default function Producto() {
     return (
       <div className="mx-auto max-w-xl px-4 py-20 text-center">
         <h1 className="text-2xl font-medium">
-          {loading ? "Cargando prenda…" : "Esta prenda ya no está disponible"}
+          {loading ? "Cargando producto…" : "Este producto ya no está disponible"}
         </h1>
         <Link to="/catalogo" className="mt-4 inline-block text-sm underline">
           Volver a la colección
@@ -43,7 +43,7 @@ export default function Producto() {
         La colección
       </Link>
       <div className="grid gap-7 md:grid-cols-2 md:gap-12">
-        <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-white">
+        <div className="product-detail-image relative aspect-[4/5] overflow-hidden rounded-3xl">
           <img
             src={images[imageIndex % images.length]}
             alt={product.title}
@@ -51,7 +51,7 @@ export default function Producto() {
             height="1200"
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain p-5"
           />
           {images.length > 1 && (
             <div className="absolute inset-x-4 bottom-4 flex justify-between">
@@ -83,14 +83,12 @@ export default function Producto() {
           </p>
           {product.demo && (
             <p className="mt-4 rounded-2xl border border-black/5 bg-white/70 p-3 text-xs leading-relaxed text-muted-foreground">
-              Demo interactiva · precios y talles de muestra. No se realizan cobros.
+              Demo interactiva · productos y precios de muestra. No se realizan cobros.
             </p>
           )}
           {product.has_sizes && (
             <fieldset className="mt-6">
-              <legend className="mb-3 text-xs font-medium">
-                Elegí tu talle{product.demo ? " · muestra" : ""}
-              </legend>
+              <legend className="mb-3 text-xs font-medium">Elegí una opción{product.demo ? " · muestra" : ""}</legend>
               <div className="flex flex-wrap gap-2">
                 {sizes.map((size) => (
                   <button
@@ -111,31 +109,31 @@ export default function Producto() {
             disabled={Boolean(product.has_sizes && !selectedSize)}
             onClick={() => {
               add({ ...product, selectedSize: product.has_sizes ? selectedSize : undefined });
-              toast.success("Agregado al carrito", { description: product.title });
+              toast.success("Added to cart", { description: product.title });
             }}
             className="disabled:cursor-not-allowed disabled:opacity-40 mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-black px-6 py-4 text-sm font-medium text-white"
           >
             <ShoppingBag size={18} />
-            {product.has_sizes && !selectedSize ? "Elegí un talle" : "Agregar al carrito"}
+            Add to cart
           </button>
           <div className="mt-6 divide-y divide-black/10 border-y border-black/10 text-xs">
             <details>
               <summary className="flex min-h-12 cursor-pointer items-center font-medium">
-                Talles y medidas
+                Detalles del producto
               </summary>
-              <p className="pb-4 leading-relaxed text-muted-foreground">
-                Consultanos las medidas de la prenda para elegir tu talle.{" "}
-                {product.demo
-                  ? "Las opciones de esta demo son ilustrativas."
-                  : "La disponibilidad depende del modelo."}
-              </p>
+              <ul className="space-y-2 pb-4 leading-relaxed text-muted-foreground">
+                {product.specs.map((spec) => (
+                  <li key={spec}>· {spec}</li>
+                ))}
+                {product.demo ? <li>· Información ilustrativa para esta demo</li> : null}
+              </ul>
             </details>
             <details>
               <summary className="flex min-h-12 cursor-pointer items-center font-medium">
                 Entrega y retiro
               </summary>
               <p className="pb-4 leading-relaxed text-muted-foreground">
-                Coordiná con la tienda las opciones de entrega o retiro en Córdoba.
+                Consultá disponibilidad y opciones de entrega o retiro con la tienda.
               </p>
             </details>
             <Link to="/contacto" className="flex min-h-12 items-center justify-between font-medium">

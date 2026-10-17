@@ -30,12 +30,6 @@ export default function App() {
       <div
         className={`flex min-h-screen flex-col ${isAdminRoute ? "" : "storefront customer-shell"}`}
       >
-        {/* Announcement bar — hidden on admin routes */}
-        {!isAdminRoute && (
-          <div className="bg-foreground text-background text-center py-2 px-4 text-[10px] tracking-[0.18em] font-medium">
-            R&E URBAN STYLE &nbsp; / &nbsp; HOMBRE · MUJER · ACCESORIOS
-          </div>
-        )}
         {!isAdminRoute && <Header />}
         <main key={location.pathname} className="page-enter min-w-0 flex-1">
           <RouteBoundary key={location.pathname}>

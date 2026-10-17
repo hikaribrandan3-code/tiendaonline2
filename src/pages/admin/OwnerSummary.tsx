@@ -135,7 +135,7 @@ export default function OwnerSummary({
         </div>
         {!state.items.length && (
           <p className="text-sm text-muted-foreground">
-            Todavía no hay productos. Agregá tu primera prenda.
+            Todavía no hay productos. Agregá el primero.
           </p>
         )}
       </section>
